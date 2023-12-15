@@ -1,6 +1,7 @@
 import tkinter as tk
 from tkinter import ttk
 from tkcalendar import DateEntry
+from tkinter.filedialog import askopenfile
 import requests
 
 requisicao = requests.get('https://economia.awesomeapi.com.br/json/all')
@@ -22,7 +23,10 @@ def pegar_cotacao():
     label_cotacao_output['text'] = f"Cotação de {moeda} no dia {data_cotacao}: R$ {valor_moeda:,.2f}"
 
 def selecionar_arquivo():
-    pass
+    caminho_arquivo = askopenfile(title='Selecione o Arquivo de Moeda')
+    var_caminho_arquivo.set(caminho_arquivo)
+    if caminho_arquivo:
+        pass
 
 def atualizar_cotacoes():
     pass
@@ -60,6 +64,8 @@ title2.grid(row=4, column=0, pady=10, sticky='nswe', columnspan=3)
 
 label_selec_arquivo = tk.Label(text='Selecione um arquivo Excel com as Moedas na Coluna A...', anchor='e')
 label_selec_arquivo.grid(row=5, column=0, columnspan=2, padx=10, pady=10, sticky='nsew')
+
+var_caminho_arquivo = tk.StringVar()
 
 btn_selec_arquivo = tk.Button(text='Selecionar Arquivo', command=selecionar_arquivo)
 btn_selec_arquivo.grid(row=5, column=2, padx=10, pady=10, sticky='nsew')
