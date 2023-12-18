@@ -1,13 +1,14 @@
 import tkinter as tk
 from tkinter import ttk
 from tkcalendar import DateEntry
-from tkinter.filedialog import askopenfile
+from tkinter.filedialog import askopenfilename
 import requests
 
 requisicao = requests.get('https://economia.awesomeapi.com.br/json/all')
 dict_moedas = requisicao.json()
 
 lista_moedas = list(dict_moedas.keys())
+
 
 
 def pegar_cotacao():
@@ -23,10 +24,10 @@ def pegar_cotacao():
     label_cotacao_output['text'] = f"Cotação de {moeda} no dia {data_cotacao}: R$ {valor_moeda:,.2f}"
 
 def selecionar_arquivo():
-    caminho_arquivo = askopenfile(title='Selecione o Arquivo de Moeda')
+    caminho_arquivo = askopenfilename(title='Selecione o Arquivo de Moeda')
     var_caminho_arquivo.set(caminho_arquivo)
     if caminho_arquivo:
-        pass
+        label_arquivo_selec['text'] = f'Arquivo Selecionado: {caminho_arquivo}'
 
 def atualizar_cotacoes():
     pass
