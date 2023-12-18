@@ -2,7 +2,10 @@ import tkinter as tk
 from tkinter import ttk
 from tkcalendar import DateEntry
 from tkinter.filedialog import askopenfilename
+import pandas as pd
 import requests
+from datetime import datetime
+import numpy as np
 
 requisicao = requests.get('https://economia.awesomeapi.com.br/json/all')
 dict_moedas = requisicao.json()
@@ -30,7 +33,42 @@ def selecionar_arquivo():
         label_arquivo_selec['text'] = f'Arquivo Selecionado: {caminho_arquivo}'
 
 def atualizar_cotacoes():
-    pass
+    df = pd.read_excel(var_caminho_arquivo.get())
+    moedas = df.iloc[:, 0]
+    data_inicial = calendario_data_ini.get()
+    data_final = calendario_data_fin.get()
+
+    ano_ini = data_inicial[-4:]
+    mes_ini = data_inicial[3:5]
+    dia_ini = data_inicial[:2]
+
+    ano_fin = data_final[-4:]
+    mes_fin = data_final[3:5]
+    dia_fin = data_final[:2]
+
+    for moeda in moedas:
+            link = f'https://economia.awesomeapi.com.br/json/daily/{moeda}-BRL/?start_date={ano_ini}{mes_ini}{dia_ini}&end_date={ano_fin}{mes_fin}{dia_fin}'
+            
+            requisicao_moeda = requests.get(link)
+            cotacoes = requisicao_moeda.json()
+            for cotacao in cotacoes:
+                timestamp = int(cotacao['timestamp'])
+                bid = float(cotacao['bid'])
+                data = datetime.fromtimestamp(timestamp)
+                data = data.strftime('%d/%m/%Y')
+                if data not in df.columns:
+                     df[data] = np.nan
+                
+                df.loc[df.iloc[:, 0] == moeda, data] = bid
+
+    df.to_excel('Teste.xlsx')
+    label_atualizar_cotacoes['text'] = 'Arquivo Atualizado com Sucesso'
+
+
+
+            
+
+        
 
 janela = tk.Tk()
 janela.title('Cotação de Moedas')
